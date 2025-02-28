@@ -8,7 +8,7 @@ data class CoinDto (
     val rank: Int,
     val name: String,
     val symbol: String,
-    val marketCapUsd: Double,
-    val priceUsd: Double,
-    val changePercent24Hr: Double
+    val marketCapUsd: String,
+    val priceUsd: String,
+    val changePercent24Hr: String
 )

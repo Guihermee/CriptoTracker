@@ -19,7 +19,6 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,13 +29,13 @@ fun InfoCard(
     formattedText: String,
     icon: ImageVector,
     contentColor: Color = MaterialTheme.colorScheme.onSurface,
-    modifier: Modifier = Modifier,
-    formattedTextStyle: TextStyle = LocalTextStyle.current.copy(
+    modifier: Modifier = Modifier
+) {
+    val defaultTextStyle = LocalTextStyle.current.copy(
         textAlign = TextAlign.Center,
         fontSize = 18.sp,
         color = contentColor
     )
-) {
     Card(
         modifier = modifier
             .padding(8.dp)
@@ -82,7 +81,7 @@ fun InfoCard(
         ) { formattedText ->
             Text(
                 text = formattedText,
-                style = formattedTextStyle,
+                style = defaultTextStyle,
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
             )

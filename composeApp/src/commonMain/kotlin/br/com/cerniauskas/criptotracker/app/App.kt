@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import br.com.cerniauskas.criptotracker.crypto.presentation.coin_detail.CoinDetailScreen
 import br.com.cerniauskas.criptotracker.crypto.presentation.coin_list.CoinListScreenRoot
 import br.com.cerniauskas.criptotracker.crypto.presentation.coin_list.CoinListViewModel
 import com.plcoding.cryptotracker.ui.theme.CryptoTrackerTheme
@@ -36,7 +37,9 @@ fun App() {
                         )
                     }
                     composable<Routes.CoinDetail> {
-    
+//                        CoinDetailScreen(
+//                            state = TODO()
+//                        )
                     }
                 }
             }

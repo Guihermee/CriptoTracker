@@ -21,7 +21,9 @@ data class DisplayableNumber(
 )
 
 fun Coin.toCoinUi(): CoinUi {
-    return CoinUi(
+    println("COIN: $this")
+
+    val coinUI = CoinUi(
         id = id,
         rank = rank,
         name = name,
@@ -31,21 +33,24 @@ fun Coin.toCoinUi(): CoinUi {
         changePercent24Hr = changePercent24Hr.toDisplayableNumber(),
         iconRes = getDrawableIdForCoin(symbol)
     )
+
+    println("COIN UI: $coinUI")
+    return coinUI
+}
+
+fun String.toDisplayableNumber(): DisplayableNumber {
+    return DisplayableNumber(
+        value = formatValue(this),
+        formatted = formatAsCurrency(this)
+    )
 }
 
 fun Double.toDisplayableNumber(): DisplayableNumber {
     return DisplayableNumber(
-        value = this,
+        value = this, // Gera valores incorretos.
         formatted = formatAsCurrency(this.toString())
     )
 }
-
-//fun formatAsCurrency(value: Double): String {
-//    val parts = value.toString().split(".")
-//    val integerPart = parts[0].reversed().chunked(3).joinToString(",").reversed()
-//    val decimalPart = if (parts.size > 1) parts[1].padEnd(2, '0') else "00"
-//    return "$integerPart.$decimalPart"
-//}
 
 fun formatAsCurrency(value: String): String {
     val parts = value.split(".") // Divide parte inteira e decimal
@@ -53,4 +58,11 @@ fun formatAsCurrency(value: String): String {
     val decimalPart = if (parts.size > 1) parts[1].take(2) else "00" // Pega só os dois primeiros números depois do ponto
 
     return "$integerPart.$decimalPart"
+}
+
+fun formatValue(value: String): Double {
+    val parts = value.split(".") // Divide parte inteira e decimal
+    val decimalPart = if (parts.size > 1) parts[1].take(2) else "00" // Pega só os dois primeiros números depois do ponto
+
+    return "${parts[0]}.$decimalPart".toDouble()
 }

@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 
 class CoinListViewModel(
     private val coinDataSource: CoinDataSource
-): ViewModel() {
+) : ViewModel() {
 
     private val _state = MutableStateFlow(CoinListState())
     val state = _state
@@ -37,33 +37,43 @@ class CoinListViewModel(
     fun onAction(actions: CoinListActions) {
         when (actions) {
             is CoinListActions.onCoinClick -> {
-
+                _state.update {
+                    it.copy(
+                        selectedCoin = actions.coinUi
+                    )
+                }
             }
         }
     }
 
     private fun loadCoins() {
         viewModelScope.launch {
-            _state.update { it.copy(
-                isLoading = true
-            ) }
+            _state.update {
+                it.copy(
+                    isLoading = true
+                )
+            }
 
             coinDataSource
                 .getCoins()
                 .onSuccess { coins ->
                     println(coins)
-                    _state.update { it.copy(
-                        coins = coins.map {  coin ->
-                            coin.toCoinUi()
-                        },
-                        isLoading = false
-                    ) }
+                    _state.update {
+                        it.copy(
+                            coins = coins.map { coin ->
+                                coin.toCoinUi()
+                            },
+                            isLoading = false
+                        )
+                    }
                 }
                 .onError { error ->
-                    _state.update { it.copy(
-                        isLoading = false,
-                        errorMessage =  error.toUiText()
-                    ) }
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = error.toUiText()
+                        )
+                    }
                     _events.send(CoinListEvent.Error(error))
                 }
         }

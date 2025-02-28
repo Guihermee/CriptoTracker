@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -29,6 +30,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import br.com.cerniauskas.criptotracker.crypto.presentation.coin_detail.CoinDetailScreen
 import br.com.cerniauskas.criptotracker.crypto.presentation.coin_list.components.CoinListItem
 import br.com.cerniauskas.criptotracker.crypto.presentation.models.CoinUi
 import criptotracker.composeapp.generated.resources.Res
@@ -63,25 +65,31 @@ fun CoinListScreenRoot(
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState)
         }
-    ) {
-        CoinListScreen(
-            state = state,
-            onAction = { action ->
-                when (action) {
-                    is CoinListActions.onCoinClick -> onCoinClick(action.coinUi)
-                    else -> Unit
-                }
-                viewModel.onAction(action)
-            },
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.background)
-        )
+    ) { innerPadding ->
+        when {
+            state.selectedCoin != null -> {
+                CoinDetailScreen(
+                    state = state,
+                    modifier = Modifier
+                        .padding(innerPadding)
+                )
+            }
+
+            else -> {
+                CoinListScreen(
+                    state = state,
+                    onAction = viewModel::onAction,
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.background)
+                )
+            }
+        }
     }
 }
 
 @Composable
 fun CoinListScreen(
-    state : CoinListState,
+    state: CoinListState,
     onAction: (CoinListActions) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -102,6 +110,7 @@ fun CoinListScreen(
                         color = MaterialTheme.colorScheme.errorContainer
                     )
                 }
+
                 state.coins.isEmpty() -> {
                     Text(
                         text = stringResource(Res.string.error_unknown_error),
@@ -110,6 +119,7 @@ fun CoinListScreen(
                         color = MaterialTheme.colorScheme.errorContainer
                     )
                 }
+
                 else -> {
                     Column(
                         modifier = Modifier
@@ -124,11 +134,13 @@ fun CoinListScreen(
                             items(state.coins) { coinUi ->
                                 CoinListItem(
                                     coinUi = coinUi,
-                                    onClickCoin = {},
+                                    onClickCoin = {
+                                        onAction(CoinListActions.onCoinClick(coinUi))
+                                    },
                                     modifier = Modifier.fillMaxWidth()
                                 )
                                 HorizontalDivider(
-                                   color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)
+                                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)
                                 )
                             }
                         }

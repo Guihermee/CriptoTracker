@@ -60,6 +60,7 @@ kotlin {
             api(libs.koin.core)
 
             implementation(libs.bundles.ktor)
+            implementation(libs.kotlinx.datetime)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
