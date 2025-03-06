@@ -8,6 +8,7 @@ import br.com.cerniauskas.criptotracker.core.domain.map
 import br.com.cerniauskas.criptotracker.crypto.data.dto.CoinHistoryDto
 import br.com.cerniauskas.criptotracker.crypto.data.dto.CoinsResponseDto
 import br.com.cerniauskas.criptotracker.crypto.data.mappers.toCoin
+import br.com.cerniauskas.criptotracker.crypto.data.mappers.toCoinPrice
 import br.com.cerniauskas.criptotracker.crypto.domain.Coin
 import br.com.cerniauskas.criptotracker.crypto.domain.CoinDataSource
 import br.com.cerniauskas.criptotracker.crypto.domain.CoinPrice
@@ -40,8 +41,8 @@ class RemoteCoinDataSource(
         end: LocalDateTime
     ): Result<List<CoinPrice>, NetworkError> {
         val timeZone = TimeZone.UTC
-        val startMillis = start.toInstant(timeZone).epochSeconds
-        val endMillis = end.toInstant(timeZone).epochSeconds
+        val startMillis = start.toInstant(timeZone).toEpochMilliseconds()
+        val endMillis = end.toInstant(timeZone).toEpochMilliseconds()
 
         return safeCall<CoinHistoryDto> {
             httpClient.get(

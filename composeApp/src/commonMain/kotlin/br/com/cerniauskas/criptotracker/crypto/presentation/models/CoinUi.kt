@@ -21,9 +21,7 @@ data class DisplayableNumber(
 )
 
 fun Coin.toCoinUi(): CoinUi {
-    println("COIN: $this")
-
-    val coinUI = CoinUi(
+    return CoinUi(
         id = id,
         rank = rank,
         name = name,
@@ -33,9 +31,6 @@ fun Coin.toCoinUi(): CoinUi {
         changePercent24Hr = changePercent24Hr.toDisplayableNumber(),
         iconRes = getDrawableIdForCoin(symbol)
     )
-
-    println("COIN UI: $coinUI")
-    return coinUI
 }
 
 fun String.toDisplayableNumber(): DisplayableNumber {

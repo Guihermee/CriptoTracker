@@ -6,6 +6,7 @@ import br.com.cerniauskas.criptotracker.core.domain.onError
 import br.com.cerniauskas.criptotracker.core.domain.onSuccess
 import br.com.cerniauskas.criptotracker.core.presentation.toUiText
 import br.com.cerniauskas.criptotracker.crypto.domain.CoinDataSource
+import br.com.cerniauskas.criptotracker.crypto.presentation.models.CoinUi
 import br.com.cerniauskas.criptotracker.crypto.presentation.models.toCoinUi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,6 +16,11 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.minus
+import kotlinx.datetime.toLocalDateTime
 
 class CoinListViewModel(
     private val coinDataSource: CoinDataSource
@@ -37,12 +43,33 @@ class CoinListViewModel(
     fun onAction(actions: CoinListActions) {
         when (actions) {
             is CoinListActions.onCoinClick -> {
-                _state.update {
-                    it.copy(
-                        selectedCoin = actions.coinUi
-                    )
-                }
+                selectCoin(actions.coinUi)
             }
+        }
+    }
+
+    private fun selectCoin(coinUi: CoinUi) {
+        _state.update { it.copy(selectedCoin = coinUi) }
+
+        viewModelScope.launch {
+            coinDataSource
+                .getCoinHistory(
+                    coinId = coinUi.id,
+                    start = Clock.System.now().minus((24 * 5), DateTimeUnit.HOUR).toLocalDateTime(TimeZone.UTC),
+                    end = Clock.System.now().toLocalDateTime(TimeZone.UTC)
+                )
+                .onSuccess { history ->
+                    println(history)
+                }
+                .onError { error ->
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = error.toUiText()
+                        )
+                    }
+                    _events.send(CoinListEvent.Error(error))
+                }
         }
     }
 
